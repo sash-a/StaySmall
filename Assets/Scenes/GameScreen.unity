@@ -209,7 +209,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &198336473
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -281,6 +281,7 @@ GameObject:
   - component: {fileID: 761268931}
   - component: {fileID: 761268930}
   - component: {fileID: 761268935}
+  - component: {fileID: 761268936}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -414,12 +415,26 @@ MonoBehaviour:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 761268929}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 7ddd17e28930ca148958a92df9dfc2ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   powerup: {fileID: 1176626804038674, guid: 936f5cac8164fd84fb545364b7298a78, type: 2}
+--- !u!114 &761268936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 761268929}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f234d37d045612448e289de50c133d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  block: {fileID: 1035991609079906, guid: 6812bb4494c604c48802c5429b775dc5, type: 2}
+  width: 20
+  height: 20
 --- !u!1 &836043191
 GameObject:
   m_ObjectHideFlags: 0
@@ -547,7 +562,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!212 &1088396815
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -966,6 +981,11 @@ Prefab:
       value: 
       objectReference: {fileID: 1708360430819502, guid: 7c97f06e725f7784c877dadf5604a1ee,
         type: 2}
+    - target: {fileID: 114001072658426204, guid: c7be28ca09d7a4148bf95f541ff75301,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: c7be28ca09d7a4148bf95f541ff75301, type: 2}
   m_IsPrefabParent: 0
@@ -995,7 +1015,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!68 &1651140768
 EdgeCollider2D:
   m_ObjectHideFlags: 0

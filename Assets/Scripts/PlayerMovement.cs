@@ -79,6 +79,7 @@ public class PlayerMovement : MonoBehaviour
             Destroy(other.gameObject); //TODO collision pushing player too far back
         }
 
+        // TODO incorrect name
         if (other.collider.gameObject.name.Contains("Powerup"))
         {
             gun = other.collider.GetComponent<PowerUpController>().gun;
