@@ -10,25 +10,33 @@ public class EnemySpawner : MonoBehaviour
 
     public float timeBetweenWaves;
     public int maxEnemies;
+
     public int minEnemies;
+    //private int numEnemies;
+
     public GameObject enemy;
+
+    private List<GameObject> enemies;
 
     // Use this for initialization
     void Start()
     {
-        nextWave = true;
+        enemies = new List<GameObject>();
+        StartCoroutine(_waveTimer());
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!nextWave) return;
+        enemies.RemoveAll(e => e == null); // enemy has been destroyed
 
-        int numEnemies = Random.Range(minEnemies, maxEnemies + 1);
-        for (int i = 0; i < numEnemies; i++)
-        {
-            Instantiate(enemy, transform.position, Quaternion.identity);
-        }
+        if (!nextWave || enemies.Count >= maxEnemies) return;
+        
+        float offsetx = Random.Range(-2, 2);
+        float offsety = Random.Range(-2, 2);
+        enemies.Add(Instantiate(enemy, transform.position + new Vector3(offsetx, offsety),
+            Quaternion.identity));
+
 
         StartCoroutine(_waveTimer());
     }

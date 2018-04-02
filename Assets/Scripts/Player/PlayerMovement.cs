@@ -13,7 +13,6 @@ public class PlayerMovement : MonoBehaviour
         /*
          * Insantiate bullets
          */
-        
     }
 
     void FixedUpdate()

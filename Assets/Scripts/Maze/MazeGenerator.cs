@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Random = System.Random;
@@ -11,7 +10,7 @@ public class MazeGenerator : MonoBehaviour
     public int width;
     public int height;
 
-    private Cell[,] maze;
+    public Cell[,] maze;
     private Random rnd = new Random(Guid.NewGuid().GetHashCode());
 
     // Use this for initialization

@@ -52,8 +52,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1491eb95edb0a4b45b8f28a497f5bf38, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeBetweenWaves: 10
-  maxEnemies: 5
+  timeBetweenWaves: 5
+  maxEnemies: 3
   minEnemies: 1
   enemy: {fileID: 1190801751591216, guid: 78dc27f3ebdbc5d41be00260c234277a, type: 2}
 --- !u!212 &212456883644226266

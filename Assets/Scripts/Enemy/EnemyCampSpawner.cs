@@ -17,8 +17,8 @@ public class EnemyCampSpawner : MonoBehaviour
         for (int i = 0; i < numCamps; i++)
         {
             int xpos = Random.Range(0, width);
-            int ypos = Random.Range(0, height);
-
+            int ypos = Random.Range(0, height) - 1;
+            // TODO check if there already is one there
             Instantiate(camp, new Vector3(xpos, ypos) * corridorWidth + new Vector3(0, corridorWidth / 2),
                 Quaternion.identity);
         }
