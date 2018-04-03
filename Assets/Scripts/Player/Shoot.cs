@@ -1,17 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class Shoot : MonoBehaviour
 {
     // Starting gun
     public Dictionary<string, float> gun = Gun.pistol;
+    public ParticleSystem flare;
+
     private bool canFire = true;
+
 
     void Update()
     {
         Debug.DrawRay(transform.position, transform.up * gun[Gun.RANGE], Color.green);
-        
+
         if (Input.GetMouseButtonDown(0) && canFire) // left mouse
         {
             // TODO: Muzzle flash
@@ -29,6 +33,11 @@ public class Shoot : MonoBehaviour
             }
 
             StartCoroutine(_timeBetweenFire());
+        }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            Instantiate(flare, transform.position, Quaternion.identity);
         }
     }
 

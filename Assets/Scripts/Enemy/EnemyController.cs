@@ -6,17 +6,18 @@ using UnityEngine;
 
 public class EnemyController : MonoBehaviour
 {
+    private float health;
+
     private Vector2 direction;
     private float speed;
     private const int PATROL_SPEED = 100;
     private const int ATTACK_SPEED = 200;
+    private bool chasing;
 
     private const int LAYER = 10;
     private int layermask = ~(1 << LAYER);
 
     private Rigidbody2D rb;
-
-    private bool chasing;
 
     // Use this for initialization
     void Start()
@@ -71,17 +72,13 @@ public class EnemyController : MonoBehaviour
             0,
             direction, 100, layermask);
 
-
         if (hit.collider != null && hit.collider.name.Contains("Player"))
         {
             chase(hit.transform.position);
             return true;
         }
 
-
         patrol();
-
-
         return true;
     }
 
@@ -107,4 +104,13 @@ public class EnemyController : MonoBehaviour
 //        //Draw a cube at the maximum distance
 //        Gizmos.DrawWireCube(transform.position + transform.up * 100, transform.localScale * 4);
 //    }
+
+    void damage(int amount)
+    {
+        health -= amount;
+        if (health <= 0)
+        {
+            Destroy(this);
+        }
+    }
 }

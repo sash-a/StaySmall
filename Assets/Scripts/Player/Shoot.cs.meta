@@ -5,7 +5,8 @@ licenseType: Free
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - flare: {fileID: 198092906097036354, guid: 1e14078a023fafd4bb7bdef5085e9e75, type: 2}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
