@@ -1,23 +1,26 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class PowerUpSpawner : MonoBehaviour
+public class PickUpSpawner : MonoBehaviour
 {
-    private float timer;
-    public GameObject powerup;
+    //public GameObject maze;
+    public GameObject gunBox;
+    public GameObject gunAmmo;
+    public GameObject flareAmmo;
 
     private int retries;
+    private float timer;
     private MazeGenerator maze;
 
-    private void Start()
+    // Use this for initialization
+    void Start()
     {
+        maze = FindObjectOfType<MazeGenerator>();
         retries = 0;
-        maze = GetComponent<MazeGenerator>();
-        // timer = Random.Range(8, 20);
         StartCoroutine(_timeBetweenSpawn());
     }
 
-    void spawn()
+    void spawn(GameObject obj)
     {
         int xpos = Random.Range(0, maze.width);
         int ypos = Random.Range(0, maze.height) - 1;
@@ -31,17 +34,33 @@ public class PowerUpSpawner : MonoBehaviour
             if (retries >= 5) return;
 
             retries = 0;
-            spawn();
+            spawn(obj);
         }
 
-        Instantiate(powerup, pos, Quaternion.identity);
+        Instantiate(obj, pos, Quaternion.identity);
+    }
+
+    GameObject chooseObject()
+    {
+        float chance = Random.Range(0, 1);
+        if (chance > 0.8)
+        {
+            return gunBox;
+        }
+
+        if (chance > 0.5)
+        {
+            return flareAmmo;
+        }
+
+        return gunAmmo;
     }
 
     private IEnumerator _timeBetweenSpawn()
     {
         timer = Random.Range(1, 2);
         yield return new WaitForSeconds(timer);
-        spawn();
+        spawn(chooseObject());
         StartCoroutine(_timeBetweenSpawn());
     }
 }

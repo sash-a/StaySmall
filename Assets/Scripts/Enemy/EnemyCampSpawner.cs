@@ -8,29 +8,35 @@ public class EnemyCampSpawner : MonoBehaviour
     public GameObject camp;
     public static HashSet<Vector2> spawnedPositions;
 
+    private int retries;
+
     // Use this for initialization
     void Start()
     {
-        spawnedPositions = new HashSet<Vector2>();
+        retries = 0;
 
         MazeGenerator maze = GetComponent<MazeGenerator>();
-        int height = maze.height;
-        int width = maze.width;
-        float corridorWidth = maze.block.transform.localScale.x * 4;
+        spawnedPositions = new HashSet<Vector2>();
 
         for (int i = 0; i < numCamps; i++)
         {
-            int xpos = Random.Range(0, width);
-            int ypos = Random.Range(0, height) - 1;
-            // TODO check if there already is one there
-            Vector3 pos = new Vector3(xpos, ypos) * corridorWidth + new Vector3(0, corridorWidth / 2);
-            if (!spawnedPositions.Add(pos))
-            {
-                i--;
-                continue;
-            }
+            spawn(maze);
+        }
+    }
 
+    void spawn(MazeGenerator maze)
+    {
+        int xpos = Random.Range(0, maze.width);
+        int ypos = Random.Range(0, maze.height) - 1;
+        // TODO check if there already is one there
+        Vector3 pos = new Vector3(xpos, ypos) * maze.corridorWidth +
+                      new Vector3(0, maze.corridorWidth / 2);
+        if (!spawnedPositions.Add(pos)) retries++;
+        print(retries);
+        if (retries < 5)
+        {
             Instantiate(camp, pos, Quaternion.identity);
+            retries = 0;
         }
     }
 }

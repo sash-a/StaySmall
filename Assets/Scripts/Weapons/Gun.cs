@@ -15,6 +15,9 @@ public class Gun
     public const string DAMAGE = "damage";
     public const string BULLET_SPEED = "b_speed";
 
+    public static float damageMod = 1;
+    public static float fireRateMod = 1;
+
     public static Dictionary<string, float> machinegun = new Dictionary<string, float>
     {
         {NUM_BULLETS, 1},

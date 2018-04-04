@@ -20,7 +20,6 @@ GameObject:
   m_Component:
   - component: {fileID: 4826955217942364}
   - component: {fileID: 212304355029514812}
-  - component: {fileID: 114034536015192928}
   - component: {fileID: 61918272315678810}
   m_Layer: 4
   m_Name: Weapon pickup
@@ -67,17 +66,6 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.25, y: 2.25}
   m_EdgeRadius: 0
---- !u!114 &114034536015192928
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1176626804038674}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cebd8efc71e3f448b266ea32a822dbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!212 &212304355029514812
 SpriteRenderer:
   m_ObjectHideFlags: 1

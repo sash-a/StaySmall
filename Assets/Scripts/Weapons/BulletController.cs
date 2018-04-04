@@ -19,7 +19,7 @@ public class BulletController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D other)
     {
         Debug.Log(other.transform.name);
-        if (other.transform.name.Contains("Enemy"))
+        if (other.transform.name.Equals("Enemy(Clone)"))
         {
             print(other.gameObject.GetComponent<EnemyController>());
             other.gameObject.GetComponent<EnemyController>().damage(damage);

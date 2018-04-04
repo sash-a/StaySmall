@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4443787666172792}
   - component: {fileID: 212101598600396050}
   - component: {fileID: 61858753173358706}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: MazePiece
   m_TagString: Untagged
   m_Icon: {fileID: 0}

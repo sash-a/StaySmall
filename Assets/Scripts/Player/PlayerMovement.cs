@@ -1,24 +1,51 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
 public class PlayerMovement : MonoBehaviour
 {
     public float speed;
-    public GameObject bullet;
+    public int playerNum;
+    public KeyValuePair<string, float> currentPowerup;
+    public float remainingPowerupTime;
+    public float health;
 
+    private string controlPrefix;
+    private Rigidbody2D rb;
 
-    void Update()
+    void Start()
     {
-        /*
-         * Insantiate bullets
-         */
+        var maze = FindObjectOfType<MazeGenerator>();
+        health = 100;
+        controlPrefix = "p" + playerNum + "_";
+        rb = GetComponent<Rigidbody2D>();
+        if (playerNum == 1)
+        {
+            transform.position =
+                new Vector3(
+                    Random.Range(0, maze.width / 2),
+                    Random.Range(0, (maze.height - 1) / 2),
+                    1
+                ) * maze.corridorWidth;
+        }
+        else
+        {
+            transform.position =
+                new Vector3(
+                    Random.Range(maze.width / 2, maze.width),
+                    Random.Range((maze.height - 1) / 2, maze.height - 1),
+                    1
+                ) * maze.corridorWidth;
+        }
     }
 
     void FixedUpdate()
     {
-        var rb = GetComponent<Rigidbody2D>();
+        remainingPowerupTime -= Time.fixedDeltaTime;
+        onInput();
+    }
+
+    void onInput()
+    {
         /*
          * Rotation
          */
@@ -28,23 +55,70 @@ public class PlayerMovement : MonoBehaviour
 //        // Locking rotation on z axis
 //        transform.eulerAngles = new Vector3(0, 0, transform.eulerAngles.z);
 //        rigidbody.angularVelocity = 0;
-        var input = Input.GetAxis("Horizontal");
+
+        var input = Input.GetAxis(controlPrefix + "Horizontal");
         rb.MoveRotation(rb.rotation - 90 * input * Time.fixedDeltaTime * 4);
 
         /*
          * Movement
          */
-        input = Input.GetAxis("Vertical");
+        input = Input.GetAxis(controlPrefix + "Vertical");
         rb.AddForce(gameObject.transform.up * speed * input);
     }
 
     private void OnCollisionEnter2D(Collision2D other)
     {
         // TODO getting a powerup
-//        if (other.collider.gameObject.name.Contains("Powerup"))
-//        {
-//            gun = other.collider.GetComponent<PowerUpController>().gun;
-//            Destroy(other.collider.gameObject);
-//        }
+        if (other.gameObject.name.Contains("PowerUp") &&
+            currentPowerup.Equals(new KeyValuePair<string, float>())) // basically if null
+        {
+            currentPowerup = other.gameObject.GetComponent<PowerupController>().chosenPowerup;
+            remainingPowerupTime = currentPowerup.Value;
+            other.gameObject.GetComponent<PowerupController>().powerUp(gameObject);
+
+            // Can't be destroyed until powerup is over
+            // Make powerup invisible and uncollidable and set the destroy timer to the longest timer 
+            other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
+            other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
+            Destroy(other.gameObject, 10);
+        }
+        else if (other.gameObject.name.Contains("GunBox"))
+        {
+            int gunChoice = Random.Range(0, 2);
+            if (gunChoice == 0)
+            {
+                GetComponentInChildren<Shoot>().gun = Gun.machinegun;
+            }
+            else
+            {
+                GetComponentInChildren<Shoot>().gun = Gun.shotgun;
+            }
+
+            Destroy(other.gameObject);
+        }
+        else if (other.gameObject.name.Contains("GunAmmo"))
+        {
+            if (GetComponentInChildren<Shoot>().gunAmmo == -1) return;
+
+            GetComponentInChildren<Shoot>().gunAmmo += 10;
+            Destroy(other.gameObject);
+        }
+        else if (other.gameObject.name.Contains("GunBox"))
+        {
+            if (GetComponentInChildren<Shoot>().flareAmmo == -1) return;
+
+            GetComponentInChildren<Shoot>().flareAmmo += 1;
+            Destroy(other.gameObject);
+        }
+    }
+
+    void damage(float damage)
+    {
+        health -= damage;
+        if (health < 0)
+        {
+            Destroy(gameObject);
+            // TODO end game
+        }
     }
 }

@@ -5,10 +5,13 @@ using Random = System.Random;
 
 public class MazeGenerator : MonoBehaviour
 {
+    public static int layer = 11;
+
     public GameObject block;
 
     public int width;
     public int height;
+    public float corridorWidth;
 
     public Cell[,] maze;
     private Random rnd = new Random(Guid.NewGuid().GetHashCode());
@@ -16,6 +19,7 @@ public class MazeGenerator : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        corridorWidth = block.transform.localScale.x * 4;
         maze = new Cell[width, height];
         genMaze(0, 0);
         displayMaze();
@@ -56,10 +60,9 @@ public class MazeGenerator : MonoBehaviour
 
     void displayMaze()
     {
-        float alleyWidth = block.GetComponent<Transform>().localScale.x * 4;
         //Vector3 initialPos = new Vector3(1, 1, 1);
         //float corridorWidth = 2;
-
+        
         for (int w = 0; w < width; w++)
         {
             for (int h = 0; h < height; h++)
@@ -68,25 +71,25 @@ public class MazeGenerator : MonoBehaviour
                 var pos = new Vector3(w, h, 0);
                 if (!cell.n)
                 {
-                    var g = placeBlock(pos * alleyWidth, false);
+                    var g = placeBlock(pos * corridorWidth, false);
                     g.GetComponent<SpriteRenderer>().color = Color.blue;
                 }
 
                 if (!cell.s)
                 {
-                    var g = placeBlock(pos * alleyWidth + new Vector3(0, -alleyWidth, 0), false);
+                    var g = placeBlock(pos * corridorWidth + new Vector3(0, -corridorWidth, 0), false);
                     g.GetComponent<SpriteRenderer>().color = Color.red;
                 }
 
                 if (!cell.w)
                 {
-                    var g = placeBlock(pos * alleyWidth, true);
+                    var g = placeBlock(pos * corridorWidth, true);
                     g.GetComponent<SpriteRenderer>().color = Color.green;
                 }
 
                 if (!cell.e)
                 {
-                    var g = placeBlock(pos * alleyWidth + new Vector3(alleyWidth, 0, 0), true);
+                    var g = placeBlock(pos * corridorWidth + new Vector3(corridorWidth, 0, 0), true);
                     g.GetComponent<SpriteRenderer>().color = Color.white;
                 }
             }
