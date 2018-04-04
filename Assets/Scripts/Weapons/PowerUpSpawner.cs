@@ -6,18 +6,37 @@ public class PowerUpSpawner : MonoBehaviour
 {
     private float timer;
     public GameObject powerup;
+
+    private MazeGenerator maze;
+    private float corridorWidth;
+    private int retries;
     private void Start()
     {
+        retries = 0;
+        maze = GetComponent<MazeGenerator>();
+        corridorWidth = maze.block.transform.localScale.x * 4;
+
         timer = Random.Range(8, 20);
         StartCoroutine(_timeBetweenSpawn());
     }
 
     void spawn()
     {
-        Instantiate(powerup, new Vector3(
-                Random.Range(-100, 100),
-                Random.Range(-60, 60), 0),
-            Quaternion.identity);
+        print("hi");
+        int xpos = Random.Range(0, maze.width);
+        int ypos = Random.Range(0, maze.height);
+
+        Vector3 pos = new Vector3(xpos, ypos) * corridorWidth + new Vector3(0, corridorWidth / 2);
+        if (!EnemyCampSpawner.spawnedPositions.Add(pos))
+        {
+            // So that it doesn't keep retrying
+            retries++;
+            if (retries >= 5) return;
+
+            retries = 0;
+            spawn();
+        }
+        Instantiate(powerup, pos, Quaternion.identity);
     }
 
     private IEnumerator _timeBetweenSpawn()

@@ -29,7 +29,7 @@ public class PlayerMovement : MonoBehaviour
 //        transform.eulerAngles = new Vector3(0, 0, transform.eulerAngles.z);
 //        rigidbody.angularVelocity = 0;
         var input = Input.GetAxis("Horizontal");
-        rb.MoveRotation(rb.rotation - 90 * input * Time.fixedDeltaTime * 3);
+        rb.MoveRotation(rb.rotation - 90 * input * Time.fixedDeltaTime * 4);
 
         /*
          * Movement

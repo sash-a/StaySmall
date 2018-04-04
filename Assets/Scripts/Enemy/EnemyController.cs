@@ -1,17 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
-using UnityEditor.Rendering;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class EnemyController : MonoBehaviour
 {
     private float health;
 
     private Vector2 direction;
-    private float speed;
-    private const int PATROL_SPEED = 100;
-    private const int ATTACK_SPEED = 200;
+    private float accel;
+    private float maxSpeed;
+
+    private const int MAX_PATROL_SPEED = 20;
+    private const int MAX_ATTACK_SPEED = 100;
     private bool chasing;
 
     private const int LAYER = 10;
@@ -22,6 +23,10 @@ public class EnemyController : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        accel = 20;
+        maxSpeed = MAX_PATROL_SPEED;
+        health = 100;
+
         Physics2D.IgnoreLayerCollision(LAYER, LAYER);
         rb = GetComponent<Rigidbody2D>();
         chasing = false;
@@ -31,7 +36,14 @@ public class EnemyController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.AddForce(direction * speed);
+        // Speed limit
+        rb.AddForce(direction * accel);
+
+        if (rb.velocity.magnitude >= maxSpeed)
+        {
+            rb.velocity = rb.velocity.normalized * MAX_PATROL_SPEED;
+        }
+
         if (!chasing)
             checkForPlayer();
     }
@@ -86,7 +98,7 @@ public class EnemyController : MonoBehaviour
     {
         chasing = false;
         // TODO randomise speed
-        speed = PATROL_SPEED;
+        maxSpeed = MAX_PATROL_SPEED + Random.Range(-5, 5);
     }
 
     void chase(Vector3 playerPos)
@@ -94,23 +106,15 @@ public class EnemyController : MonoBehaviour
         chasing = true;
         direction = playerPos - transform.position; // This needs to be A*!!!!
         direction.Normalize();
-        speed = ATTACK_SPEED;
+        maxSpeed = MAX_ATTACK_SPEED;
     }
 
-//    private void OnDrawGizmos()
-//    {
-//        //Draw a Ray forward from GameObject toward the maximum distance
-//        Gizmos.DrawRay(transform.position, transform.up * 100);
-//        //Draw a cube at the maximum distance
-//        Gizmos.DrawWireCube(transform.position + transform.up * 100, transform.localScale * 4);
-//    }
-
-    void damage(int amount)
+    public void damage(float amount)
     {
         health -= amount;
         if (health <= 0)
         {
-            Destroy(this);
+            Destroy(gameObject);
         }
     }
 }

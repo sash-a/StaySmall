@@ -21,6 +21,7 @@ public class EnemySpawner : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        Physics2D.IgnoreCollision(GetComponent<Collider2D>(), enemy.GetComponent<Collider2D>());
         enemies = new List<GameObject>();
         StartCoroutine(_waveTimer());
     }
@@ -31,7 +32,7 @@ public class EnemySpawner : MonoBehaviour
         enemies.RemoveAll(e => e == null); // enemy has been destroyed
 
         if (!nextWave || enemies.Count >= maxEnemies) return;
-        
+
         float offsetx = Random.Range(-2, 2);
         float offsety = Random.Range(-2, 2);
         enemies.Add(Instantiate(enemy, transform.position + new Vector3(offsetx, offsety),
