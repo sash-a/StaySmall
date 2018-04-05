@@ -32,7 +32,6 @@ public class EnemyCampSpawner : MonoBehaviour
         Vector3 pos = new Vector3(xpos, ypos) * maze.corridorWidth +
                       new Vector3(0, maze.corridorWidth / 2);
         if (!spawnedPositions.Add(pos)) retries++;
-        print(retries);
         if (retries < 5)
         {
             Instantiate(camp, pos, Quaternion.identity);

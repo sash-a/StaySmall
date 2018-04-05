@@ -17,7 +17,7 @@ public class PowerUpSpawner : MonoBehaviour
         StartCoroutine(_timeBetweenSpawn());
     }
 
-    void spawn()
+    public void spawn()
     {
         int xpos = Random.Range(0, maze.width);
         int ypos = Random.Range(0, maze.height) - 1;

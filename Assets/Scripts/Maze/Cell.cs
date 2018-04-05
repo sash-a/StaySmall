@@ -13,6 +13,8 @@ public class Cell
 
     private static string north = "n", south = "s", west = "w", east = "e";
     public static List<string> directions = new List<string> {north, south, west, east};
+    public List<bool> paths;
+
 
     public static Dictionary<string, int> dx = new Dictionary<string, int>
     {
@@ -44,6 +46,8 @@ public class Cell
         s = false;
         w = false;
         e = false;
+
+        paths = new List<bool> {n, s, w, e};
     }
 
     public void addDir(string dir)

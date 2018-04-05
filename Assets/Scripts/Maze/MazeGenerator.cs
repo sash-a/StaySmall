@@ -72,25 +72,25 @@ public class MazeGenerator : MonoBehaviour
                 if (!cell.n)
                 {
                     var g = placeBlock(pos * corridorWidth, false);
-                    g.GetComponent<SpriteRenderer>().color = Color.blue;
+                    //g.GetComponent<SpriteRenderer>().color = Color.blue;
                 }
 
                 if (!cell.s)
                 {
                     var g = placeBlock(pos * corridorWidth + new Vector3(0, -corridorWidth, 0), false);
-                    g.GetComponent<SpriteRenderer>().color = Color.red;
+                    //g.GetComponent<SpriteRenderer>().color = Color.red;
                 }
 
                 if (!cell.w)
                 {
                     var g = placeBlock(pos * corridorWidth, true);
-                    g.GetComponent<SpriteRenderer>().color = Color.green;
+                    //g.GetComponent<SpriteRenderer>().color = Color.green;
                 }
 
                 if (!cell.e)
                 {
                     var g = placeBlock(pos * corridorWidth + new Vector3(corridorWidth, 0, 0), true);
-                    g.GetComponent<SpriteRenderer>().color = Color.white;
+                    //g.GetComponent<SpriteRenderer>().color = Color.white;
                 }
             }
         }

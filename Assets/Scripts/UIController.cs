@@ -29,7 +29,7 @@ public class UIController : MonoBehaviour
 
     void updatePowerupBar()
     {
-        if (_playerController.remainingPowerupTime < 0) return;
+        if (_playerController.remainingPowerupTime < 0 || _playerController.currentPowerup.Value == 0) return;
         powerupBar.localScale =
             new Vector3(1, _playerController.remainingPowerupTime / _playerController.currentPowerup.Value, 1);
     }

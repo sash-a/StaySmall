@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -19,22 +18,27 @@ public class PowerupController : MonoBehaviour
     {
         if (chosenPowerup.Key.Equals(Powerup.DOUBLE_DAMAGE))
         {
+            print("double damage player: " + player.GetComponent<PlayerMovement>().playerNum);
             StartCoroutine(_gunDamage(player));
         }
         else if (chosenPowerup.Key.Equals(Powerup.DOUBLE_FIRE_RATE))
         {
+            print("double fire player: " + player.GetComponent<PlayerMovement>().playerNum);
             StartCoroutine(_fireRate(player));
         }
         else if (chosenPowerup.Key.Equals(Powerup.INFINITE_AMMO))
         {
+            print("Inf ammo player: " + player.GetComponent<PlayerMovement>().playerNum);
             StartCoroutine(_infiniteAmmo(player));
         }
         else if (chosenPowerup.Key.Equals(Powerup.WALLFAZE))
         {
+            print("wallf player: " + player.GetComponent<PlayerMovement>().playerNum);
             StartCoroutine(_wallFaze(player));
         }
         else if (chosenPowerup.Key.Equals(Powerup.ZOOM_OUT))
         {
+            print("zoom player: " + player.GetComponent<PlayerMovement>().playerNum);
             StartCoroutine(_zoomOut(player));
         }
     }
@@ -77,9 +81,7 @@ public class PowerupController : MonoBehaviour
     private IEnumerator _wallFaze(GameObject player)
     {
         Physics2D.IgnoreLayerCollision(player.layer, MazeGenerator.layer);
-        print("starting");
         yield return new WaitForSeconds(2);
-        print("done!");
         Physics2D.IgnoreLayerCollision(player.layer, MazeGenerator.layer, false);
 
         player.GetComponent<PlayerMovement>().currentPowerup = new KeyValuePair<string, float>();
@@ -87,9 +89,9 @@ public class PowerupController : MonoBehaviour
 
     private IEnumerator _zoomOut(GameObject player)
     {
-        Camera.main.fieldOfView += 10;
+        Camera.allCameras[player.GetComponent<PlayerMovement>().playerNum - 1].orthographicSize += 20;
         yield return new WaitForSeconds(chosenPowerup.Value);
-        Camera.main.fieldOfView -= 10;
+        Camera.allCameras[player.GetComponent<PlayerMovement>().playerNum - 1].orthographicSize -= 20;
 
         player.GetComponent<PlayerMovement>().currentPowerup = new KeyValuePair<string, float>();
     }

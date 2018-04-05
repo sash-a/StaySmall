@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -14,28 +15,11 @@ public class PlayerMovement : MonoBehaviour
 
     void Start()
     {
-        var maze = FindObjectOfType<MazeGenerator>();
         health = 100;
         controlPrefix = "p" + playerNum + "_";
         rb = GetComponent<Rigidbody2D>();
-        if (playerNum == 1)
-        {
-            transform.position =
-                new Vector3(
-                    Random.Range(0, maze.width / 2),
-                    Random.Range(0, (maze.height - 1) / 2),
-                    1
-                ) * maze.corridorWidth;
-        }
-        else
-        {
-            transform.position =
-                new Vector3(
-                    Random.Range(maze.width / 2, maze.width),
-                    Random.Range((maze.height - 1) / 2, maze.height - 1),
-                    1
-                ) * maze.corridorWidth;
-        }
+
+        spawnPlayers();
     }
 
     void FixedUpdate()
@@ -68,7 +52,6 @@ public class PlayerMovement : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D other)
     {
-        // TODO getting a powerup
         if (other.gameObject.name.Contains("PowerUp") &&
             currentPowerup.Equals(new KeyValuePair<string, float>())) // basically if null
         {
@@ -80,7 +63,7 @@ public class PlayerMovement : MonoBehaviour
             // Make powerup invisible and uncollidable and set the destroy timer to the longest timer 
             other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
             other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
-            Destroy(other.gameObject, 10);
+            Destroy(other.gameObject, 11);
         }
         else if (other.gameObject.name.Contains("GunBox"))
         {
@@ -110,15 +93,45 @@ public class PlayerMovement : MonoBehaviour
             GetComponentInChildren<Shoot>().flareAmmo += 1;
             Destroy(other.gameObject);
         }
+
+        if (other.gameObject.name.Contains("Player"))
+        {
+            SceneManager.UnloadSceneAsync("GameScreen");
+            SceneManager.LoadScene("Menu");
+        }
     }
 
-    void damage(float damage)
+    public void damage(float damage)
     {
         health -= damage;
         if (health < 0)
         {
             Destroy(gameObject);
             // TODO end game
+        }
+    }
+
+    void spawnPlayers()
+    {
+        var maze = FindObjectOfType<MazeGenerator>();
+
+        if (playerNum == 1)
+        {
+            transform.position =
+                new Vector3(
+                    Random.Range(0, maze.width / 2),
+                    Random.Range(0, (maze.height) / 2),
+                    1
+                ) * maze.corridorWidth + new Vector3(0, -maze.corridorWidth / 2);
+        }
+        else
+        {
+            transform.position =
+                new Vector3(
+                    Random.Range(maze.width / 2, maze.width),
+                    Random.Range((maze.height - 1) / 2, maze.height),
+                    1
+                ) * maze.corridorWidth + new Vector3(0, -maze.corridorWidth / 2);
         }
     }
 }

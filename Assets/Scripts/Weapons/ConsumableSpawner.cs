@@ -1,26 +1,30 @@
 ﻿using System.Collections;
 using UnityEngine;
 
-public class PickUpSpawner : MonoBehaviour
+public class ConsumableSpawner : MonoBehaviour
 {
     //public GameObject maze;
     public GameObject gunBox;
     public GameObject gunAmmo;
     public GameObject flareAmmo;
 
+    public GameObject powerup;
+
     private int retries;
     private float timer;
     private MazeGenerator maze;
+
 
     // Use this for initialization
     void Start()
     {
         maze = FindObjectOfType<MazeGenerator>();
         retries = 0;
-        StartCoroutine(_timeBetweenSpawn());
+        
+        StartCoroutine(_spawner());
     }
 
-    public void spawn(GameObject obj)
+    public void spawnPickup(GameObject obj)
     {
         int xpos = Random.Range(0, maze.width);
         int ypos = Random.Range(0, maze.height) - 1;
@@ -34,10 +38,31 @@ public class PickUpSpawner : MonoBehaviour
             if (retries >= 5) return;
 
             retries = 0;
-            spawn(obj);
+            spawnPickup(obj);
         }
 
         Instantiate(obj, pos, Quaternion.identity);
+    }
+
+    public void spawnPowerup()
+    {
+        int xpos = Random.Range(0, maze.width);
+        int ypos = Random.Range(0, maze.height) - 1;
+
+        Vector3 pos = new Vector3(xpos, ypos) * maze.corridorWidth +
+                      new Vector3(0, maze.corridorWidth / 2);
+        
+        if (!EnemyCampSpawner.spawnedPositions.Add(pos))
+        {
+            // So that it doesn't keep retrying
+            retries++;
+            if (retries >= 5) return;
+
+            retries = 0;
+            spawnPowerup();
+        }
+
+        Instantiate(powerup, pos, Quaternion.identity);
     }
 
     public GameObject chooseObject()
@@ -56,11 +81,20 @@ public class PickUpSpawner : MonoBehaviour
         return gunAmmo;
     }
 
-    private IEnumerator _timeBetweenSpawn()
+    private IEnumerator _spawner()
     {
-        timer = Random.Range(1, 2);
-        yield return new WaitForSeconds(timer);
-        spawn(chooseObject());
-        StartCoroutine(_timeBetweenSpawn());
+        float choice = Random.Range(0f, 1f);
+        if (choice > 0.8)
+        {
+            spawnPowerup();
+        }
+        else
+        {
+            spawnPickup(chooseObject());
+        }
+
+        yield return new WaitForSeconds(Random.Range(1, 2));
+
+        StartCoroutine(_spawner());
     }
 }
