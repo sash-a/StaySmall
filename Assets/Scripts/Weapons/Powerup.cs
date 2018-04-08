@@ -2,11 +2,11 @@
 
 public class Powerup
 {
-    public const string DOUBLE_DAMAGE = "doubleDmg";
-    public const string DOUBLE_FIRE_RATE = "doubleFireRate";
-    public const string INFINITE_AMMO = "InfiniteAmmo";
-    public const string WALLFAZE = "WallFaze";
-    public const string ZOOM_OUT = "ZoomOut";
+    public const string DOUBLE_DAMAGE = "Double damage";
+    public const string DOUBLE_FIRE_RATE = "Double Fire Rate";
+    public const string INFINITE_AMMO = "Infinite Ammo";
+    public const string WALLFAZE = "Wall Faze";
+    public const string ZOOM_OUT = "Zoom Out";
 
     // Maps power up names to timer
     public static Dictionary<string, float> powerUps = new Dictionary<string, float>

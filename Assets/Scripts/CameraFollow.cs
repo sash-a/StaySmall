@@ -15,8 +15,8 @@ public class CameraFollow : MonoBehaviour
         var lr = GetComponentInChildren<LineRenderer>();
         if (lr != null)
         {
-            lr.SetPosition(0, new Vector3(-30, 15 + playerPos.y, -1));
-            lr.SetPosition(1, new Vector3(100, 15 + playerPos.y, -1));
+            lr.SetPosition(0, new Vector3(-100, 15 + playerPos.y, -1));
+            lr.SetPosition(1, new Vector3(200, 15 + playerPos.y, -1));
         }
     }
 }

@@ -113,7 +113,7 @@ MonoBehaviour:
   timeBetweenWaves: 1
   maxEnemies: 1
   minEnemies: 1
-  enemy: {fileID: 1585640541825146, guid: 78dc27f3ebdbc5d41be00260c234277a, type: 2}
+  enemy: {fileID: 1240285735199370, guid: 78dc27f3ebdbc5d41be00260c234277a, type: 2}
 --- !u!114 &114265842698167646
 MonoBehaviour:
   m_ObjectHideFlags: 1

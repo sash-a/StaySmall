@@ -10,27 +10,26 @@ public class EnemyController : MonoBehaviour
 {
     private float health;
 
+    private bool chasing;
     private bool canChangeDirection;
+    
     private Vector2 direction;
     private float accel;
     private float maxSpeed;
 
     private const int MAX_PATROL_SPEED = 20;
     private const int MAX_ATTACK_SPEED = 100;
-    private bool chasing;
 
     private const int LAYER = 10;
     private int layermask;
 
-
     private GameObject player;
     private List<Node> pathToPlayer;
+    private List<Node> allNodes = new List<Node>();
 
     private Rigidbody2D rb;
     private MazeGenerator maze;
 
-
-    // Use this for initialization
     void Start()
     {
         maze = FindObjectOfType<MazeGenerator>();
@@ -41,48 +40,37 @@ public class EnemyController : MonoBehaviour
         canChangeDirection = true;
 
         accel = 20;
-        health = 100;
+        health = 50;
         patrol();
 
         layermask = ~(1 << LAYER);
-        //findLongestDirection();
-        StartCoroutine(a());
-    }
-
-    IEnumerator a()
-    {
-        yield return new WaitForSeconds(1);
-//        pathToPlayer = astar(new Node(worldToGridPoint(player.transform.position)));
-//        print(pathToPlayer.First());
         findLongestDirection();
     }
 
     private void FixedUpdate()
     {
-        //if (player != null) return;
-        rb.velocity = direction * accel; // enemy kept double colliding with wall
         // Speed limit
         if (rb.velocity.magnitude >= maxSpeed) rb.velocity = rb.velocity.normalized * MAX_PATROL_SPEED;
-//        if (!chasing)
-//        {
-//            rb.velocity = direction * accel; // enemy kept double colliding with wall
-//            // Speed limit
-//            if (rb.velocity.magnitude >= maxSpeed) rb.velocity = rb.velocity.normalized * MAX_PATROL_SPEED;
-//
-//            player = checkForPlayer();
-//            if (player != null)
-//            {
-//                pathToPlayer = astar(new Node(worldToGridPoint(player.transform.position)));
-//                chasing = true;
-//            }
-//        }
-//        else
-//        {
-//            // print("going");
-//            moveToPlayer(player);
-//        }
+        if (!chasing)
+        {
+            rb.velocity = direction * accel;
+            // Speed limit
+            if (rb.velocity.magnitude >= maxSpeed) rb.velocity = rb.velocity.normalized * MAX_PATROL_SPEED;
+
+            player = checkForPlayer();
+            if (player != null)
+            {
+                pathToPlayer = astar(new Node(worldToGridPoint(player.transform.position)));
+                chasing = true;
+            }
+        }
+        else
+        {
+            moveToPlayer(player);
+        }
     }
 
+    // Just here to fix the case when the enemy double collides with the wall
     private IEnumerator changeDirTimer()
     {
         canChangeDirection = false;
@@ -136,19 +124,17 @@ public class EnemyController : MonoBehaviour
             return;
         }
 
-        foreach (var x in pathToPlayer)
-        {
-            print(x.position);
-        }
-
         if (pathToPlayer.Count == 0)
         {
-            player.GetComponent<PlayerMovement>().damage(10);
-            Destroy(gameObject);
+            // In the block player WAS in should call A* till definitely in the block player currently is in...but this
+            // will work 90% of the time
+            chase(player.transform.position);
+            return;
         }
 
+        // Move throught the path and delete from the list when at the correct pos
         transform.position = Vector3.MoveTowards(transform.position, gridToWorldPoint(pathToPlayer.First().position),
-            Time.deltaTime * 20);
+            Time.deltaTime * 30);
 
         if (transform.position.Equals(gridToWorldPoint(pathToPlayer.First().position)))
         {
@@ -169,7 +155,6 @@ public class EnemyController : MonoBehaviour
 
         if (hit.collider != null && hit.collider.name.Contains("Player"))
         {
-            print("found player");
             return hit.collider.gameObject;
         }
 
@@ -181,13 +166,17 @@ public class EnemyController : MonoBehaviour
         maxSpeed = MAX_PATROL_SPEED + Random.Range(-5, 5);
     }
 
-//    void chase(Vector3 playerPos)
-//    {
-//        chasing = true;
-//        direction = playerPos - transform.position; // This needs to be A*!!!!
-//        direction.Normalize();
-//        maxSpeed = MAX_ATTACK_SPEED;
-//    }
+    void chase(Vector3 playerPos)
+    {
+        chasing = true;
+        direction = playerPos - transform.position;
+        direction.Normalize();
+        maxSpeed = MAX_ATTACK_SPEED;
+
+        rb.velocity = direction * accel;
+        // Speed limit
+        if (rb.velocity.magnitude >= maxSpeed) rb.velocity = rb.velocity.normalized * MAX_PATROL_SPEED;
+    }
 
     public void damage(float amount)
     {
@@ -197,27 +186,17 @@ public class EnemyController : MonoBehaviour
 
     Vector3 gridToWorldPoint(Vector3 point)
     {
-        return point * maze.corridorWidth - new Vector3(0, maze.corridorWidth / 2);
+        float x = point.x * maze.corridorWidth;
+        float y = point.y * maze.corridorWidth - maze.corridorWidth / 2;
+        return new Vector3(x, y);
     }
 
     Vector2 worldToGridPoint(Vector3 point)
     {
-        int x = (int) (point.x / maze.corridorWidth) + 1;
-        int y = (int) (point.y / maze.corridorWidth) + 1;
-        if (point.x % maze.corridorWidth == 0)
-        {
-            x--;
-        }
-
-        if (point.y % maze.corridorWidth == 0)
-        {
-            y--;
-        }
-
+        int x = (int) Math.Floor((point.x + maze.corridorWidth / 2) / maze.corridorWidth);
+        int y = (int) Math.Floor((point.y + maze.corridorWidth) / maze.corridorWidth);
         return new Vector2(x, y);
     }
-
-    private List<Node> allNodes = new List<Node>();
 
     void addNeighbour(Node n, Node target, Vector3 shift)
     {
@@ -243,74 +222,22 @@ public class EnemyController : MonoBehaviour
         Cell position = maze.maze[(int) n.position.x, (int) n.position.y];
         if (position.n)
         {
-            var node = new Node(new Vector2(n.position.x, n.position.y + 1),
-                n.costFromOrigin + 1,
-                target);
-
-            foreach (var otherNode in allNodes)
-            {
-                if (node.Equals(otherNode))
-                {
-                    node = otherNode;
-                }
-            }
-
-            allNodes.Add(node);
-            n.neighbours.Add(node);
+            addNeighbour(n, target, new Vector3(0, 1));
         }
 
         if (position.s)
         {
-            var node = new Node(new Vector2(n.position.x, n.position.y - 1),
-                n.costFromOrigin + 1,
-                target);
-
-            foreach (var otherNode in allNodes)
-            {
-                if (node.Equals(otherNode))
-                {
-                    node = otherNode;
-                }
-            }
-
-            allNodes.Add(node);
-            n.neighbours.Add(node);
+            addNeighbour(n, target, new Vector3(0, -1));
         }
 
         if (position.w)
         {
-            var node = new Node(new Vector2(n.position.x - 1, n.position.y),
-                n.costFromOrigin + 1,
-                target);
-
-            foreach (var otherNode in allNodes)
-            {
-                if (node.Equals(otherNode))
-                {
-                    node = otherNode;
-                }
-            }
-
-            allNodes.Add(node);
-            n.neighbours.Add(node);
+            addNeighbour(n, target, new Vector3(-1, 0));
         }
 
         if (position.e)
         {
-            var node = new Node(new Vector2(n.position.x + 1, n.position.y),
-                n.costFromOrigin + 1,
-                target);
-
-            foreach (var otherNode in allNodes)
-            {
-                if (node.Equals(otherNode))
-                {
-                    node = otherNode;
-                }
-            }
-
-            allNodes.Add(node);
-            n.neighbours.Add(node);
+            addNeighbour(n, target, new Vector3(1, 0));
         }
     }
 

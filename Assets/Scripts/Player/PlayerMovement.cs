@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -13,11 +16,16 @@ public class PlayerMovement : MonoBehaviour
     private string controlPrefix;
     private Rigidbody2D rb;
 
+    public Text text;
+    private TextDisplayer textDisplayer;
+
     void Start()
     {
         health = 100;
         controlPrefix = "p" + playerNum + "_";
         rb = GetComponent<Rigidbody2D>();
+
+        textDisplayer = new TextDisplayer(text);
 
         spawnPlayers();
     }
@@ -25,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     void FixedUpdate()
     {
         remainingPowerupTime -= Time.fixedDeltaTime;
+
         onInput();
     }
 
@@ -56,17 +65,22 @@ public class PlayerMovement : MonoBehaviour
             currentPowerup.Equals(new KeyValuePair<string, float>())) // basically if null
         {
             currentPowerup = other.gameObject.GetComponent<PowerupController>().chosenPowerup;
+
+            StartCoroutine(textDisplayer.ShowMessage("Powerup: " + currentPowerup.Key, currentPowerup.Value));
+
             remainingPowerupTime = currentPowerup.Value;
             other.gameObject.GetComponent<PowerupController>().powerUp(gameObject);
 
             // Can't be destroyed until powerup is over
-            // Make powerup invisible and uncollidable and set the destroy timer to the longest timer 
+            // Make powerup invisible and uncollidable and set the destroy timer to 11 (Longest powerup time is 10)
             other.gameObject.GetComponent<SpriteRenderer>().enabled = false;
             other.gameObject.GetComponent<BoxCollider2D>().enabled = false;
             Destroy(other.gameObject, 11);
         }
         else if (other.gameObject.name.Contains("GunBox"))
         {
+            StartCoroutine(textDisplayer.ShowMessage("You found a new gun!", 2));
+
             int gunChoice = Random.Range(0, 2);
             if (gunChoice == 0)
             {
@@ -83,12 +97,16 @@ public class PlayerMovement : MonoBehaviour
         {
             if (GetComponentInChildren<Shoot>().gunAmmo == -1) return;
 
+            StartCoroutine(textDisplayer.ShowMessage("You found ammo!", 2));
+            
             GetComponentInChildren<Shoot>().gunAmmo += 10;
             Destroy(other.gameObject);
         }
-        else if (other.gameObject.name.Contains("GunBox"))
+        else if (other.gameObject.name.Contains("FlareAmmo"))
         {
             if (GetComponentInChildren<Shoot>().flareAmmo == -1) return;
+
+            StartCoroutine(textDisplayer.ShowMessage("You found flare Ammo!", 2));
 
             GetComponentInChildren<Shoot>().flareAmmo += 1;
             Destroy(other.gameObject);
@@ -96,9 +114,16 @@ public class PlayerMovement : MonoBehaviour
 
         if (other.gameObject.name.Contains("Player"))
         {
-            SceneManager.UnloadSceneAsync("GameScreen");
-            SceneManager.LoadScene("Menu");
+            StartCoroutine(textDisplayer.ShowMessage("You win!", 5));
+            StartCoroutine(endGame());
         }
+    }
+
+    IEnumerator endGame()
+    {
+        yield return new WaitForSeconds(5);
+        SceneManager.UnloadSceneAsync("GameScreen");
+        SceneManager.LoadScene("Menu");
     }
 
     public void damage(float damage)
@@ -106,8 +131,8 @@ public class PlayerMovement : MonoBehaviour
         health -= damage;
         if (health < 0)
         {
-            Destroy(gameObject);
-            // TODO end game
+            StartCoroutine(textDisplayer.ShowMessage("You died!", 5));
+            StartCoroutine(endGame());
         }
     }
 

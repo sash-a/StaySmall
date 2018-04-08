@@ -1,12 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Networking;
 
 public class Shoot : MonoBehaviour
 {
-    // Starting gun
-    public Dictionary<string, float> gun = Gun.shotgun;
+    public Dictionary<string, float> gun;
     public ParticleSystem flare;
     public GameObject bullet;
     public int flareAmmo;
@@ -20,6 +18,9 @@ public class Shoot : MonoBehaviour
         Physics2D.IgnoreCollision(GetComponentInParent<Collider2D>(), bullet.GetComponent<Collider2D>());
         flareAmmo = 3;
         gunAmmo = 30;
+
+        // Starting gun
+        gun = Gun.pistol;
 
         controlPrefix = "p" + GetComponentInParent<PlayerMovement>().playerNum + "_";
     }
@@ -50,7 +51,7 @@ public class Shoot : MonoBehaviour
         if (Input.GetButtonDown(controlPrefix + "Fire2") && flareAmmo > 0)
         {
             Instantiate(flare, transform.position, Quaternion.identity);
-            
+
             if (flareAmmo != -1) flareAmmo--; // infinite ammo
         }
     }
