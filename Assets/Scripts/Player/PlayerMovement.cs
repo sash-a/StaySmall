@@ -19,8 +19,18 @@ public class PlayerMovement : MonoBehaviour
     public Text text;
     private TextDisplayer textDisplayer;
 
+    public AudioClip a_spawn;
+    public AudioClip a_gameOver;
+    public AudioClip a_win;
+    public AudioClip a_powerup;
+    
+    private AudioSource audio;
+    
     void Start()
     {
+        audio = GetComponent<AudioSource>();
+        audio.PlayOneShot(a_spawn);
+
         health = 100;
         controlPrefix = "p" + playerNum + "_";
         rb = GetComponent<Rigidbody2D>();
@@ -67,6 +77,7 @@ public class PlayerMovement : MonoBehaviour
             currentPowerup = other.gameObject.GetComponent<PowerupController>().chosenPowerup;
 
             StartCoroutine(textDisplayer.ShowMessage("Powerup: " + currentPowerup.Key, currentPowerup.Value));
+            audio.PlayOneShot(a_powerup);
 
             remainingPowerupTime = currentPowerup.Value;
             other.gameObject.GetComponent<PowerupController>().powerUp(gameObject);
@@ -80,6 +91,7 @@ public class PlayerMovement : MonoBehaviour
         else if (other.gameObject.name.Contains("GunBox"))
         {
             StartCoroutine(textDisplayer.ShowMessage("You found a new gun!", 2));
+            audio.PlayOneShot(a_powerup);
 
             int gunChoice = Random.Range(0, 2);
             if (gunChoice == 0)
@@ -98,7 +110,8 @@ public class PlayerMovement : MonoBehaviour
             if (GetComponentInChildren<Shoot>().gunAmmo == -1) return;
 
             StartCoroutine(textDisplayer.ShowMessage("You found ammo!", 2));
-            
+            audio.PlayOneShot(a_powerup);
+
             GetComponentInChildren<Shoot>().gunAmmo += 10;
             Destroy(other.gameObject);
         }
@@ -107,6 +120,7 @@ public class PlayerMovement : MonoBehaviour
             if (GetComponentInChildren<Shoot>().flareAmmo == -1) return;
 
             StartCoroutine(textDisplayer.ShowMessage("You found flare Ammo!", 2));
+            audio.PlayOneShot(a_powerup);
 
             GetComponentInChildren<Shoot>().flareAmmo += 1;
             Destroy(other.gameObject);
@@ -115,6 +129,8 @@ public class PlayerMovement : MonoBehaviour
         if (other.gameObject.name.Contains("Player"))
         {
             StartCoroutine(textDisplayer.ShowMessage("You win!", 5));
+            audio.PlayOneShot(a_win);
+
             StartCoroutine(endGame());
         }
     }
@@ -133,6 +149,7 @@ public class PlayerMovement : MonoBehaviour
         {
             StartCoroutine(textDisplayer.ShowMessage("You died!", 5));
             StartCoroutine(endGame());
+            audio.PlayOneShot(a_gameOver);
         }
     }
 

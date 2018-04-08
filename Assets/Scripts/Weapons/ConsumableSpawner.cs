@@ -83,7 +83,7 @@ public class ConsumableSpawner : MonoBehaviour
 
     private IEnumerator _spawner()
     {
-        float choice = Random.Range(10f, 20f);
+        float choice = Random.Range(0f, 1f);
         if (choice > 0.8)
         {
             spawnPowerup();
@@ -93,7 +93,7 @@ public class ConsumableSpawner : MonoBehaviour
             spawnPickup(chooseObject());
         }
 
-        yield return new WaitForSeconds(Random.Range(1, 2));
+        yield return new WaitForSeconds(Random.Range(10f, 20f));
 
         StartCoroutine(_spawner());
     }

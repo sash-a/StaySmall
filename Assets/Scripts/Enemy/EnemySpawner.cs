@@ -11,7 +11,6 @@ public class EnemySpawner : MonoBehaviour
     public float timeBetweenWaves;
     public int maxEnemies;
 
-    public int minEnemies;
     //private int numEnemies;
 
     public GameObject enemy;
@@ -21,6 +20,9 @@ public class EnemySpawner : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        maxEnemies = (int) Math.Ceiling(LevelManager.difficulty / 2);
+        timeBetweenWaves = 10 / LevelManager.difficulty;
+
         Physics2D.IgnoreCollision(GetComponent<Collider2D>(), enemy.GetComponent<Collider2D>());
         enemies = new List<GameObject>();
         StartCoroutine(_waveTimer());

@@ -12,7 +12,10 @@ public class Shoot : MonoBehaviour
 
     private bool canFire = true;
     private string controlPrefix;
-
+    
+    public AudioClip a_shot;
+    private AudioSource audio;
+    
     private void Start()
     {
         Physics2D.IgnoreCollision(GetComponentInParent<Collider2D>(), bullet.GetComponent<Collider2D>());
@@ -23,6 +26,8 @@ public class Shoot : MonoBehaviour
         gun = Gun.pistol;
 
         controlPrefix = "p" + GetComponentInParent<PlayerMovement>().playerNum + "_";
+
+        audio = GetComponentInParent<AudioSource>();
     }
 
     void Update()
@@ -32,6 +37,7 @@ public class Shoot : MonoBehaviour
             new List<Vector3> {new Vector3(0, 0, 0), new Vector3(0.5f, 0, 0), -new Vector3(0.5f, 0, 0)};
         if (Input.GetButton(controlPrefix + "Fire1") && canFire && gunAmmo > 0) // left mouse
         {
+            audio.PlayOneShot(a_shot);
             // TODO: Muzzle flash
             for (int i = 0; i < Mathf.Min(gun[Gun.NUM_BULLETS], gunAmmo); i++)
             {

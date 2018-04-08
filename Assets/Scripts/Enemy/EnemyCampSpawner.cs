@@ -13,6 +13,7 @@ public class EnemyCampSpawner : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        numCamps = (int) LevelManager.difficulty;
         retries = 0;
 
         MazeGenerator maze = GetComponent<MazeGenerator>();

@@ -19,6 +19,9 @@ public class MazeGenerator : MonoBehaviour
     // Use this for initialization
     void Start()
     {
+        width = (int) LevelManager.difficulty * 4;
+        height = (int) LevelManager.difficulty * 4;
+
         corridorWidth = block.transform.localScale.x * 4;
         maze = new Cell[width, height];
         genMaze(0, 0);
@@ -62,7 +65,7 @@ public class MazeGenerator : MonoBehaviour
     {
         //Vector3 initialPos = new Vector3(1, 1, 1);
         //float corridorWidth = 2;
-        
+
         for (int w = 0; w < width; w++)
         {
             for (int h = 0; h < height; h++)

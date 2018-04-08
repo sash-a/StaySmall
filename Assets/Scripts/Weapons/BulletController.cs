@@ -4,10 +4,15 @@ public class BulletController : MonoBehaviour
 {
     // Use this for initialization
     private float damage;
-
+    
+    public AudioClip a_hit;
+    private AudioSource audio;
+    
     void Start()
     {
         Destroy(gameObject, 5);
+
+        audio = GetComponent<AudioSource>();
     }
 
     public void fire(Vector3 direction, float speed, float damage)
@@ -20,12 +25,13 @@ public class BulletController : MonoBehaviour
     {
         if (other.transform.name.Equals("Enemy(Clone)"))
         {
-            print(other.gameObject.GetComponent<EnemyController>());
             other.gameObject.GetComponent<EnemyController>().damage(damage);
+            audio.PlayOneShot(a_hit);
         }
         else if (other.transform.name.Contains("EnemyCamp"))
         {
             other.gameObject.GetComponent<CampController>().damage(damage);
+            audio.PlayOneShot(a_hit);
         }
 
         Destroy(gameObject);
